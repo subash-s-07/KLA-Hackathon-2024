@@ -46,8 +46,10 @@ for i in range(0,len(data['neighbourhoods'])):
     dist.append(temp)
 rest_to_neig.insert(0,0)
 dist.insert(0,rest_to_neig)
+neig.insert(0,'r0')
 tour, total_distance = solve_tsp_nearest(dist)
-
+for i in range(0,len(tour)):
+    tour[i]=neig[tour[i]]
 print("Tour:", tour)
 print("Total distance:", total_distance)
 """ Solution:
