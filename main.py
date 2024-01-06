@@ -1,5 +1,20 @@
 import math
 """Level 0 using Nearest Neighbor Algorithm----------------------------------------------------------"""
+def two_opt(tour, distances):
+    improved = True
+    while improved:
+        improved = False
+        for i in range(1, len(tour) - 2):
+            for j in range(i + 1, len(tour)):
+                if j - i == 1:
+                    continue  # changes nothing, skip then
+                new_tour = tour[:]
+                new_tour[i:j] = tour[j - 1:i - 1:-1]  # reverse the sub-route
+                if total_distance(new_tour, distances) < total_distance(tour, distances):
+                    tour = new_tour
+                    improved = True
+    return tour  # Move this line outside the while loop
+
 def solve_tsp_nearest(distances):
     num_cities = len(distances)
     visited = [False] * num_cities
@@ -47,11 +62,19 @@ for i in range(0,len(data['neighbourhoods'])):
 rest_to_neig.insert(0,0)
 dist.insert(0,rest_to_neig)
 neig.insert(0,'r0')
-tour, total_distance = solve_tsp_nearest(dist)
+# New total_distance function
+def total_distance(tour, distances):
+    return sum(distances[tour[i]][tour[i + 1]] for i in range(len(tour) - 1))
+tour, total_dist = solve_tsp_nearest(dist)
+optimized_tour = two_opt(tour, dist)
 for i in range(0,len(tour)):
     tour[i]=neig[tour[i]]
-print("Tour:", tour)
-print("Total distance:", total_distance)
-""" Solution:
-Tour: [0, 14, 9, 4, 17, 2, 19, 10, 15, 18, 5, 16, 11, 13, 7, 8, 20, 6, 1, 12, 3, 0]
-Total distance: 12440"""
+print("Nearest Neighbor Tour:", tour)
+print("Nearest Neighbor Total distance:", total_dist)
+
+
+print("Optimized Total distance:", total_distance(optimized_tour, dist))
+for i in range(0,len(tour)):
+    optimized_tour[i]=neig[optimized_tour[i]]
+print("Optimized Tour:", optimized_tour)
+
